@@ -1,9 +1,11 @@
 # Ignore Folders #
 ##################
 
+
+
 **/Demos
 **/Solutions
-**/Final Slides
+**/Final_Slides
 
-\#slides
-\#week02
+
+Live_Sessions/week02
