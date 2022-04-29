@@ -4,6 +4,6 @@
 **/Demos
 **/Solutions
 **/Final Slides
-*.pptx
-/slides
-/week02
+
+\#slides
+\#week02
