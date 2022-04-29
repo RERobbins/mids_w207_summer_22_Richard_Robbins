@@ -4,5 +4,6 @@
 **/Demos
 **/Solutions
 **/Final Slides
-**Live Sessions/week01/slides
-**Live Sessions/week02
+*.pptx
+/slides
+/week02
