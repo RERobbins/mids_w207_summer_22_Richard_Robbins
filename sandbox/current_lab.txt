@@ -1,0 +1,4 @@
+    Or copy and paste one of these URLs:
+        http://localhost:8888/lab?token=cedd0412b57e3363c1b93dd4b77b30271885177fb5de6280
+        http://127.0.0.1:8888/lab?token=cedd0412b57e3363c1b93dd4b77b30271885177fb5de6280
+
