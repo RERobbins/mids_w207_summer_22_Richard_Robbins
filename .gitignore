@@ -33,6 +33,3 @@ MANIFEST
 **/*.ipynb_checkpoints/ 
 **/*.DS_Store/
 
-/Live_Sessions/week02/slides
-/Live_Sessions/week03/slides
-
