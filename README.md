@@ -1,5 +1,5 @@
 # Richard Robbins Composite Repository for w207
-1. Cornelia Ilin course work
-2. Richard Robbins submissions
-3. Python Machine Learning (Raschka and Mirjalili) Code Examples
-4. Deep Learning with Python (Chollet) Code Examples
+
+1. Richard Robbins submissions
+2. Python Machine Learning (Raschka and Mirjalili) Code Examples
+3. Deep Learning with Python (Chollet) Code Examples
