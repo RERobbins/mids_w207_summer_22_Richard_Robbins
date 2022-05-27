@@ -27,14 +27,5 @@ share/python-wheels/
 *.egg
 MANIFEST
 
-**/Demos
-**/Solutions
-**/Final_Slides
 **/*.ipynb_checkpoints/ 
 **/*.DS_Store/
-
-<<<<<<< HEAD
-=======
-
-/Live_Sessions/Week03/slides
->>>>>>> 50f6c875b812a9a2a869651eeb63c495c6e66d0d
