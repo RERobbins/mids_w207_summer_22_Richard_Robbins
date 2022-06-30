@@ -118,8 +118,13 @@ def build_experiment_model(
     # This layer averages over the first dimension of the input by default.
     model.add(tf.keras.layers.GlobalAveragePooling1D())
 
-    # Hidden layer
+    # Hidden layer with Dropout layers before and after
+    model.add(tf.keras.layers.Dropout(rate=.3))
     model.add(tf.keras.layers.Dense(units=hidden_units, activation="relu"))
+    model.add(tf.keras.layers.Dropout(rate=.3))
+    model.add(tf.keras.layers.Dense(units=round(hidden_units/2), activation="relu"))
+    model.add(tf.keras.layers.Dropout(rate=.3))
+
 
     model.add(
         tf.keras.layers.Dense(
