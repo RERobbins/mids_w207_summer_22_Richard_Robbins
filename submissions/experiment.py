@@ -13,7 +13,7 @@ import tensorflow as tf
 from tensorflow.keras.datasets import imdb
 
 tf.get_logger().setLevel("INFO")
-tf.config.set_visible_devices([], "GPU")
+#tf.config.set_visible_devices([], "GPU")
 
 # Dataset
 
