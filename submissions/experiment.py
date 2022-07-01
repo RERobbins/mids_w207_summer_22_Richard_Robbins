@@ -125,9 +125,9 @@ def build_experiment_model(
 
     model.add(tf.keras.layers.GlobalAveragePooling1D())
 
-    while hidden_layers:
+    for hidden_layer in hidden_layers:
         model.add(tf.keras.layers.Dropout(rate=dropout_rate))
-        model.add(tf.keras.layers.Dense(units=hidden_layers.pop(0), activation="relu"))
+        model.add(tf.keras.layers.Dense(units=hidden_layer, activation="relu"))
 
     model.add(tf.keras.layers.Dropout(rate=0.5))
 
