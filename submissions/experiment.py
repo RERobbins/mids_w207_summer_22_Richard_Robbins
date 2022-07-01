@@ -12,6 +12,7 @@ sns.set(style="darkgrid")  # default style
 import tensorflow as tf
 from tensorflow.keras.datasets import imdb
 
+tf.config.set_visible_devices([], "GPU")
 tf.get_logger().setLevel("INFO")
 
 # Dataset
@@ -29,8 +30,9 @@ tf.get_logger().setLevel("INFO")
 
 DEFAULT_SEQUENCE_SIZE = 20
 DEFAULT_MAX_TOKEN_ID = 1000
-DEFAULT_HIDDEN_LAYER_UNITS = 10
-DEFAULT_EMBEDDINGS = 2
+DEFAULT_HIDDEN_LAYERS = []
+DEFAULT_EMBEDDING_DIM = 2
+DEFAULT_DROPOUT_RATE = .5
 
 # Preprocess Features to Pad and Reduce Sequences and Limit Vocabulary
 
@@ -64,8 +66,10 @@ def preprocess(
 def experiment(
     sequence_length=DEFAULT_SEQUENCE_SIZE,
     vocab_size=DEFAULT_MAX_TOKEN_ID,
-    hidden_units=DEFAULT_HIDDEN_LAYER_UNITS,
-    embedding_dim=DEFAULT_EMBEDDINGS,
+    hidden_layers=DEFAULT_HIDDEN_LAYERS,
+    embedding_dim=DEFAULT_EMBEDDING_DIM,
+    dropout_rate=DEFAULT_DROPOUT_RATE,
+    epochs=5,
     verbose=1,
 ):
 
@@ -76,32 +80,36 @@ def experiment(
     model = build_experiment_model(
         vocab_size=vocab_size,
         sequence_length=sequence_length,
-        hidden_units=hidden_units,
+        hidden_layers=hidden_layers,
         embedding_dim=embedding_dim,
+        dropout_rate=dropout_rate
     )
 
     history = model.fit(
         x=train_features_reduced,
         y=Y_train,
-        epochs=5,
+        epochs=epochs,
         batch_size=64,
         validation_split=0.1,
         verbose=verbose,
     )
 
-    test_accuracy = model.evaluate(test_features_reduced, Y_test)[1]
+    _, validation_accuracy = get_final_accuracy(history)
+    test_accuracy = model.evaluate(test_features_reduced, Y_test)
 
     if verbose == 1:
         history_report(model, history)
-
-    return model, history, test_accuracy
+    
+        
+    return model, history, validation_accuracy, test_accuracy
 
 
 def build_experiment_model(
     vocab_size=DEFAULT_MAX_TOKEN_ID,
     sequence_length=DEFAULT_SEQUENCE_SIZE,
-    hidden_units=DEFAULT_HIDDEN_LAYER_UNITS,
-    embedding_dim=DEFAULT_EMBEDDINGS,
+    hidden_layers=DEFAULT_HIDDEN_LAYERS,
+    embedding_dim=DEFAULT_EMBEDDING_DIM,
+    dropout_rate=DEFAULT_DROPOUT_RATE,
 ):
     """Build a tf.keras model using embeddings."""
     # Clear session and remove randomness.
@@ -115,16 +123,13 @@ def build_experiment_model(
         )
     )
 
-    # This layer averages over the first dimension of the input by default.
     model.add(tf.keras.layers.GlobalAveragePooling1D())
 
-    # Hidden layer with Dropout layers before and after
-    model.add(tf.keras.layers.Dropout(rate=.3))
-    model.add(tf.keras.layers.Dense(units=hidden_units, activation="relu"))
-    model.add(tf.keras.layers.Dropout(rate=.3))
-    model.add(tf.keras.layers.Dense(units=round(hidden_units/2), activation="relu"))
-    model.add(tf.keras.layers.Dropout(rate=.3))
+    while hidden_layers:
+        model.add(tf.keras.layers.Dropout(rate=dropout_rate))
+        model.add(tf.keras.layers.Dense(units=hidden_layers.pop(0), activation="relu"))
 
+    model.add(tf.keras.layers.Dropout(rate=0.5))
 
     model.add(
         tf.keras.layers.Dense(
@@ -141,7 +146,8 @@ def build_experiment_model(
 def history_report(model, history, caption=None):
     if caption:
         print(caption)
-    history = pd.DataFrame(history.history)
+    if not isinstance(history, pd.DataFrame):
+        history = pd.DataFrame(history.history)
     plot_loss_history(history)
     plot_accuracy_history(history)
 
@@ -153,6 +159,8 @@ def history_report(model, history, caption=None):
 
 
 def plot_loss_history(history):
+    if not isinstance(history, pd.DataFrame):
+        history = pd.DataFrame(history.history)
     plt.ylabel("Loss")
     plt.xlabel("Epoch")
     plt.xticks(range(0, len(history["loss"] + 1)))
@@ -163,6 +171,8 @@ def plot_loss_history(history):
 
 
 def plot_accuracy_history(history):
+    if not isinstance(history, pd.DataFrame):
+        history = pd.DataFrame(history.history)
     plt.ylabel("Accuracy")
     plt.xlabel("Epoch")
     plt.xticks(range(0, len(history["accuracy"] + 1)))
@@ -173,6 +183,8 @@ def plot_accuracy_history(history):
 
 
 def get_final_accuracy(history):
+    if not isinstance(history, pd.DataFrame):
+        history = pd.DataFrame(history.history)
     return history["accuracy"].values[-1], history["val_accuracy"].values[-1]
 
 
