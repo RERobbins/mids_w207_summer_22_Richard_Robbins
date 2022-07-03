@@ -1,5 +1,7 @@
 # Imports and Environment Settings
+import math
 import re
+import pickle
 
 import numpy as np
 import pandas as pd
@@ -32,7 +34,7 @@ DEFAULT_SEQUENCE_SIZE = 20
 DEFAULT_MAX_TOKEN_ID = 1000
 DEFAULT_HIDDEN_LAYERS = []
 DEFAULT_EMBEDDING_DIM = 2
-DEFAULT_DROPOUT_RATE = .5
+DEFAULT_DROPOUT_RATE = 0.5
 
 # Preprocess Features to Pad and Reduce Sequences and Limit Vocabulary
 
@@ -74,7 +76,7 @@ def experiment(
 ):
 
     train_features_reduced, test_features_reduced = preprocess(
-        max_length=sequence_length, max_token_id=vocab_size,
+        max_length=sequence_length, max_token_id=vocab_size
     )
 
     model = build_experiment_model(
@@ -82,7 +84,7 @@ def experiment(
         sequence_length=sequence_length,
         hidden_layers=hidden_layers,
         embedding_dim=embedding_dim,
-        dropout_rate=dropout_rate
+        dropout_rate=dropout_rate,
     )
 
     history = model.fit(
@@ -94,14 +96,141 @@ def experiment(
         verbose=verbose,
     )
 
-    _, validation_accuracy = get_final_accuracy(history)
-    test_accuracy = model.evaluate(test_features_reduced, Y_test)
+    train_accuracy, validation_accuracy = get_final_accuracy(history)
+    test_accuracy = model.evaluate(test_features_reduced, Y_test, verbose=verbose)[1]
+
+    print(
+        f"Final accuracy: train {train_accuracy:.4f} validation {validation_accuracy:.4f} test {test_accuracy:.4f}"
+    )
 
     if verbose == 1:
         history_report(model, history)
-    
-        
+
     return model, history, validation_accuracy, test_accuracy
+
+
+def next_step(
+    sequence_length=DEFAULT_SEQUENCE_SIZE,
+    vocab_size=DEFAULT_MAX_TOKEN_ID,
+    hidden_layers=DEFAULT_HIDDEN_LAYERS,
+    embedding_dim=DEFAULT_EMBEDDING_DIM,
+    dropout_rate=DEFAULT_DROPOUT_RATE,
+    epochs=5,
+    verbose=1,
+    exploration_rate=0.1,
+    test_run=True,
+):
+
+    print(
+        f"Next Step: {vocab_size=} {sequence_length=} {hidden_layers=} {embedding_dim=} {dropout_rate=} {epochs=} {verbose=} {exploration_rate=}"
+    )
+
+    trial_hidden_layer_count = len(hidden_layers) + 1
+
+    trial_vocab_multiple = 2 ** trial_hidden_layer_count
+    preliminary_trial_vocab_size = vocab_size * (1 + exploration_rate)
+    trial_vocab_size = round_to_next_multiple(
+        preliminary_trial_vocab_size, trial_vocab_multiple
+    )
+
+    trial_sequence_length = round(sequence_length * (1 + exploration_rate))
+
+    trial_hidden_layers = [
+        int(trial_vocab_size / (2 ** idx)) for idx in range(trial_hidden_layer_count)
+    ]
+
+    print(f"{trial_vocab_size=} {trial_sequence_length=} {trial_hidden_layers=}")
+
+    ### left off here, think about what happens with short lists of hidden layers. . .
+
+    trial_vocab_layer_pairs = [
+        (trial_vocab_size, base_hidden_layers),
+        (trial_vocab_size, trial_hidden_layers[:-2]),
+        (trial_vocab_size, trial_hidden_layers[:-1]),
+        (trial_vocab_size, trial_hidden_layers),
+        (trial_vocab_size, [100]),
+        (trial_vocab_size, [100, 20]),
+    ]
+
+    base_hidden_layers_extended = base_hidden_layers + [
+        math.ceil(base_hidden_layers[-1] / 2)
+    ]
+    base_vocab_layer_pairs = [
+        (base_vocab_size, base_hidden_layers[:-1]),
+        (base_vocab_size, base_hidden_layers),
+        (base_vocab_size, base_hidden_layers_extended),
+        (base_vocab_size, [100]),
+        (base_vocab_size, [100, 20]),
+    ]
+
+    vocab_layer_pairs = [base_vocab_layer_pairs, trial_vocab_layer_pairs]
+    sequences = [base_sequence_length, trial_sequence_length]
+
+    embedding_dims = [
+        dim
+        for dim in [base_embedding_dim - 1, base_embedding_dim, base_embedding_dim + 1]
+        if dim > 0
+    ]
+
+    dropout_rates = [
+        rate
+        for rate in [
+            base_dropout_rate - 0.1,
+            base_dropout_rate,
+            base_dropout_rate + 0.1,
+        ]
+        if 0 < rate < 1
+    ]
+
+    parameters = itertools.product(
+        vocab_layer_pairs, sequences, embedding_dims, dropout_rates
+    )
+
+    results = {}
+
+    for vocab_layer_pairs, sequence_length, embedding_dim, dropout_rate in parameters:
+        for vocab_size, hidden_layers in vocab_layer_pairs:
+            print(
+                f"{vocab_size=} {sequence_length=} {hidden_layers=} {embedding_dim=} {dropout_rate=}"
+            )
+            if test_run:
+                break
+
+            _, _, validation_accuracy, _ = experiment(
+                vocab_size=vocab_size,
+                sequence_length=sequence_length,
+                hidden_layers=hidden_layers,
+                embedding_dim=embedding_dim,
+                dropout_rate=dropout_rate,
+                epochs=epochs,
+                verbose=verbose,
+            )
+            results[
+                (
+                    vocab_size,
+                    sequence_length,
+                    tuple(hidden_layers),
+                    embedding_dim,
+                    dropout_rate,
+                )
+            ] = validation_accuracy
+
+            with open("results_in_play.pickle", "wb") as f:
+                pickle.dump(results, f)
+
+    max_value_key = None
+    if not test_run:
+        max_value_key = max(results, key=results.get)
+        max_value_accuracy = results[max_value_key]
+        print(
+            f"Maximum Validation Accuracy from Step: {max_value_accuracy} with Key: {max_value_key}"
+        )
+
+    return results, max_value_key
+
+
+def round_to_next_multiple(number, multiple):
+    return math.ceil(number / multiple) * multiple
 
 
 def build_experiment_model(
