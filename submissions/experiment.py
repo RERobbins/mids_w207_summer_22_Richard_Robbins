@@ -1,4 +1,5 @@
 # Imports and Environment Settings
+import itertools
 import math
 import re
 import pickle
@@ -121,10 +122,6 @@ def next_step(
     test_run=True,
 ):
 
-    print(
-        f"Next Step: {vocab_size=} {sequence_length=} {hidden_layers=} {embedding_dim=} {dropout_rate=} {epochs=} {verbose=} {exploration_rate=}"
-    )
-
     trial_hidden_layer_count = len(hidden_layers) + 1
 
     trial_vocab_multiple = 2 ** trial_hidden_layer_count
@@ -139,49 +136,45 @@ def next_step(
         int(trial_vocab_size / (2 ** idx)) for idx in range(trial_hidden_layer_count)
     ]
 
-    print(f"{trial_vocab_size=} {trial_sequence_length=} {trial_hidden_layers=}")
+    trial_vocab_layer_pairs = [(trial_vocab_size, trial_hidden_layers[:-2]),
+                               (trial_vocab_size, trial_hidden_layers[:-1]),
+                               (trial_vocab_size, trial_hidden_layers),
+                               (trial_vocab_size, [100]),
+                               (trial_vocab_size, [100, 20]),
+                              ]
 
-    ### left off here, think about what happens with short lists of hidden layers. . .
-
-    trial_vocab_layer_pairs = [
-        (trial_vocab_size, base_hidden_layers),
-        (trial_vocab_size, trial_hidden_layers[:-2]),
-        (trial_vocab_size, trial_hidden_layers[:-1]),
-        (trial_vocab_size, trial_hidden_layers),
-        (trial_vocab_size, [100]),
-        (trial_vocab_size, [100, 20]),
-    ]
-
-    base_hidden_layers_extended = base_hidden_layers + [
-        math.ceil(base_hidden_layers[-1] / 2)
-    ]
+    if len(hidden_layers) == 0:
+        hidden_layers_extended = [math.ceil(vocab_size/2)]
+    else:
+        hidden_layers_extended = hidden_layers + [math.ceil(hidden_layers[-1] / 2)
+                                                            ]
     base_vocab_layer_pairs = [
-        (base_vocab_size, base_hidden_layers[:-1]),
-        (base_vocab_size, base_hidden_layers),
-        (base_vocab_size, base_hidden_layers_extended),
-        (base_vocab_size, [100]),
-        (base_vocab_size, [100, 20]),
+        (vocab_size, hidden_layers[:-1]),
+        (vocab_size, hidden_layers),
+        (vocab_size, hidden_layers_extended),
+        (vocab_size, [100]),
+        (vocab_size, [100, 20]),
     ]
 
     vocab_layer_pairs = [base_vocab_layer_pairs, trial_vocab_layer_pairs]
-    sequences = [base_sequence_length, trial_sequence_length]
-
+    sequences = [sequence_length, trial_sequence_length]
+  
     embedding_dims = [
         dim
-        for dim in [base_embedding_dim - 1, base_embedding_dim, base_embedding_dim + 1]
+        for dim in [embedding_dim - 1, embedding_dim, embedding_dim + 1]
         if dim > 0
     ]
 
     dropout_rates = [
         rate
         for rate in [
-            base_dropout_rate - 0.1,
-            base_dropout_rate,
-            base_dropout_rate + 0.1,
+            dropout_rate - 0.1,
+            dropout_rate,
+            dropout_rate + 0.1,
         ]
         if 0 < rate < 1
     ]
-
+    
     parameters = itertools.product(
         vocab_layer_pairs, sequences, embedding_dims, dropout_rates
     )
@@ -193,9 +186,10 @@ def next_step(
             print(
                 f"{vocab_size=} {sequence_length=} {hidden_layers=} {embedding_dim=} {dropout_rate=}"
             )
+            
             if test_run:
-                break
-
+                continue
+            
             _, _, validation_accuracy, _ = experiment(
                 vocab_size=vocab_size,
                 sequence_length=sequence_length,
