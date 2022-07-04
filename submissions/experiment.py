@@ -1,8 +1,10 @@
 # Imports and Environment Settings
 import itertools
+import json
 import math
 import re
 import pickle
+import multiprocessing
 
 import numpy as np
 import pandas as pd
@@ -168,9 +170,9 @@ def next_step(
     dropout_rates = [
         rate
         for rate in [
-            dropout_rate - 0.1,
-            dropout_rate,
-            dropout_rate + 0.1,
+            round(dropout_rate - 0.1, 3),
+            round(dropout_rate, 3),
+            round(dropout_rate + 0.1, 3)
         ]
         if 0 < rate < 1
     ]
@@ -179,35 +181,28 @@ def next_step(
         vocab_layer_pairs, sequences, embedding_dims, dropout_rates
     )
 
+    
+    experiment_dicts = [{"vocab_size": vocab_size,
+                         "sequence_length": sequence_length,
+                         "hidden_layers": tuple(hidden_layers),
+                         "embedding_dim": embedding_dim,
+                         "dropout_rate": dropout_rate,
+                         "epochs": epochs,
+                         "verbose": verbose,}
+                        for vocab_layer_pairs, sequence_length, embedding_dim, dropout_rate in parameters
+                        for vocab_size, hidden_layers in vocab_layer_pairs]    
+    
     results = {}
-
-    for vocab_layer_pairs, sequence_length, embedding_dim, dropout_rate in parameters:
-        for vocab_size, hidden_layers in vocab_layer_pairs:
-            print(
-                f"{vocab_size=} {sequence_length=} {hidden_layers=} {embedding_dim=} {dropout_rate=}"
-            )
+    
+    for experiment_args in experiment_dicts:
+            print(json.dumps(experiment_args))
             
             if test_run:
                 continue
             
-            _, _, validation_accuracy, _ = experiment(
-                vocab_size=vocab_size,
-                sequence_length=sequence_length,
-                hidden_layers=hidden_layers,
-                embedding_dim=embedding_dim,
-                dropout_rate=dropout_rate,
-                epochs=epochs,
-                verbose=verbose,
-            )
-            results[
-                (
-                    vocab_size,
-                    sequence_length,
-                    tuple(hidden_layers),
-                    embedding_dim,
-                    dropout_rate,
-                )
-            ] = validation_accuracy
+            _, _, validation_accuracy, _ = experiment(**experiment_args)
+               
+            results[json.dumps(experiment_args)] = validation_accuracy
 
             with open("results_in_play.pickle", "wb") as f:
                 pickle.dump(results, f)
