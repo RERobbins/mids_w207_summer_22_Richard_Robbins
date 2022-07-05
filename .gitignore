@@ -29,3 +29,5 @@ MANIFEST
 
 **/*.ipynb_checkpoints/ 
 **/*.DS_Store/
+CNN_images/
+CNN_labels
