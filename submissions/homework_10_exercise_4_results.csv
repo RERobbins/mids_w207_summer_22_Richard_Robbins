@@ -19,3 +19,33 @@ panel_index,train_accuracy,validation_accuracy,kernel_size,strides,pool_size,lea
 7,0.9368,0.8065,"(5, 5)","(1, 1)","(2, 2)",0.001,Adam,0.3,2,random,x86_64,[],1657225324
 8,0.8526,0.8065,"(5, 5)","(1, 1)","(2, 2)",0.001,Adam,0.3,3,yes,x86_64,[],1657225324
 9,0.8947,0.7742,"(5, 5)","(1, 1)","(2, 2)",0.001,Adam,0.3,3,no,x86_64,[],1657225324
+0,0.8842,0.7742,"(5, 5)","(1, 1)","(2, 2)",0.001,Adam,0.3,3,random,arm,"[LogicalDevice(name='/device:GPU:0', device_type='GPU')]",1657227028
+1,0.9684,0.7742,"(3, 3)","(1, 1)","(2, 2)",0.001,Adam,0.3,3,random,arm,"[LogicalDevice(name='/device:GPU:0', device_type='GPU')]",1657227028
+2,0.9,0.7742,"(5, 5)","(2, 2)","(2, 2)",0.001,Adam,0.3,3,random,arm,"[LogicalDevice(name='/device:GPU:0', device_type='GPU')]",1657227028
+3,0.9,0.8065,"(5, 5)","(1, 1)","(3, 3)",0.001,Adam,0.3,3,random,arm,"[LogicalDevice(name='/device:GPU:0', device_type='GPU')]",1657227028
+4,0.8789,0.8387,"(5, 5)","(1, 1)","(2, 2)",0.01,Adam,0.3,3,random,arm,"[LogicalDevice(name='/device:GPU:0', device_type='GPU')]",1657227028
+5,0.7053,0.7097,"(5, 5)","(1, 1)","(2, 2)",0.001,SGD,0.3,3,random,arm,"[LogicalDevice(name='/device:GPU:0', device_type='GPU')]",1657227028
+6,0.9211,0.7742,"(5, 5)","(1, 1)","(2, 2)",0.001,Adam,0.1,3,random,arm,"[LogicalDevice(name='/device:GPU:0', device_type='GPU')]",1657227028
+7,0.8421,0.8065,"(5, 5)","(1, 1)","(2, 2)",0.001,Adam,0.3,2,random,arm,"[LogicalDevice(name='/device:GPU:0', device_type='GPU')]",1657227028
+8,0.8895,0.8065,"(5, 5)","(1, 1)","(2, 2)",0.001,Adam,0.3,3,yes,arm,"[LogicalDevice(name='/device:GPU:0', device_type='GPU')]",1657227028
+9,0.9263,0.7419,"(5, 5)","(1, 1)","(2, 2)",0.001,Adam,0.3,3,no,arm,"[LogicalDevice(name='/device:GPU:0', device_type='GPU')]",1657227028
+0,0.8789,0.7742,"(5, 5)","(1, 1)","(2, 2)",0.001,Adam,0.3,3,random,arm,"[LogicalDevice(name='/device:GPU:0', device_type='GPU')]",1657227191
+1,0.9421,0.8387,"(3, 3)","(1, 1)","(2, 2)",0.001,Adam,0.3,3,random,arm,"[LogicalDevice(name='/device:GPU:0', device_type='GPU')]",1657227191
+2,0.8947,0.7742,"(5, 5)","(2, 2)","(2, 2)",0.001,Adam,0.3,3,random,arm,"[LogicalDevice(name='/device:GPU:0', device_type='GPU')]",1657227191
+3,0.9,0.8065,"(5, 5)","(1, 1)","(3, 3)",0.001,Adam,0.3,3,random,arm,"[LogicalDevice(name='/device:GPU:0', device_type='GPU')]",1657227191
+4,0.8684,0.7419,"(5, 5)","(1, 1)","(2, 2)",0.01,Adam,0.3,3,random,arm,"[LogicalDevice(name='/device:GPU:0', device_type='GPU')]",1657227191
+5,0.7105,0.7097,"(5, 5)","(1, 1)","(2, 2)",0.001,SGD,0.3,3,random,arm,"[LogicalDevice(name='/device:GPU:0', device_type='GPU')]",1657227191
+6,0.9421,0.7742,"(5, 5)","(1, 1)","(2, 2)",0.001,Adam,0.1,3,random,arm,"[LogicalDevice(name='/device:GPU:0', device_type='GPU')]",1657227191
+7,0.8632,0.7742,"(5, 5)","(1, 1)","(2, 2)",0.001,Adam,0.3,2,random,arm,"[LogicalDevice(name='/device:GPU:0', device_type='GPU')]",1657227191
+8,0.9105,0.7097,"(5, 5)","(1, 1)","(2, 2)",0.001,Adam,0.3,3,yes,arm,"[LogicalDevice(name='/device:GPU:0', device_type='GPU')]",1657227191
+9,0.8421,0.7419,"(5, 5)","(1, 1)","(2, 2)",0.001,Adam,0.3,3,no,arm,"[LogicalDevice(name='/device:GPU:0', device_type='GPU')]",1657227191
+0,0.9263,0.7742,"(5, 5)","(1, 1)","(2, 2)",0.001,Adam,0.3,3,random,arm,"[LogicalDevice(name='/device:GPU:0', device_type='GPU')]",1657227352
+1,0.9684,0.8065,"(3, 3)","(1, 1)","(2, 2)",0.001,Adam,0.3,3,random,arm,"[LogicalDevice(name='/device:GPU:0', device_type='GPU')]",1657227352
+2,0.8842,0.8065,"(5, 5)","(2, 2)","(2, 2)",0.001,Adam,0.3,3,random,arm,"[LogicalDevice(name='/device:GPU:0', device_type='GPU')]",1657227352
+3,0.8526,0.8387,"(5, 5)","(1, 1)","(3, 3)",0.001,Adam,0.3,3,random,arm,"[LogicalDevice(name='/device:GPU:0', device_type='GPU')]",1657227352
+4,0.8211,0.7742,"(5, 5)","(1, 1)","(2, 2)",0.01,Adam,0.3,3,random,arm,"[LogicalDevice(name='/device:GPU:0', device_type='GPU')]",1657227352
+5,0.7263,0.7097,"(5, 5)","(1, 1)","(2, 2)",0.001,SGD,0.3,3,random,arm,"[LogicalDevice(name='/device:GPU:0', device_type='GPU')]",1657227352
+6,0.9421,0.7419,"(5, 5)","(1, 1)","(2, 2)",0.001,Adam,0.1,3,random,arm,"[LogicalDevice(name='/device:GPU:0', device_type='GPU')]",1657227352
+7,0.8579,0.7742,"(5, 5)","(1, 1)","(2, 2)",0.001,Adam,0.3,2,random,arm,"[LogicalDevice(name='/device:GPU:0', device_type='GPU')]",1657227352
+8,0.8842,0.7419,"(5, 5)","(1, 1)","(2, 2)",0.001,Adam,0.3,3,yes,arm,"[LogicalDevice(name='/device:GPU:0', device_type='GPU')]",1657227352
+9,0.9632,0.7742,"(5, 5)","(1, 1)","(2, 2)",0.001,Adam,0.3,3,no,arm,"[LogicalDevice(name='/device:GPU:0', device_type='GPU')]",1657227352
